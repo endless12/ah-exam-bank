@@ -171,7 +171,7 @@ label.ck{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
 <div id="toast"></div>
 <script>
 /* ================= 题库（内置，支持导入更新包） ================= */
-const BANK_VERSION = "v1.1（2026-11-05）";
+const BANK_VERSION = "v1.2（2026-11-05）";
 const QUESTIONS = [
 {id:"AH001",c:"ah",q:"安徽省的简称“皖”源于历史上的（　）。",o:["古皖国与皖山（天柱山）","皖南山区","皖河流域的航运传统","清代的皖江道"],a:0,e:"安徽简称“皖”，源于春秋时期的古皖国（今安庆潜山一带）。境内天柱山古称皖山、皖公山，皖河由此流经。“皖”意为洁白美好。",s:"省情基础",d:1},
 {id:"AH002",c:"ah",q:"“安徽”省名取自下列哪两个历史府名的首字？（　）",o:["安庆、徽州","合肥、黄山","宣城、池州","芜湖、寿州"],a:0,e:"清康熙六年（1667年）建省，取安庆府、徽州府二府首字合称“安徽”。安庆为清代安徽省会，徽州是徽文化发源地。",s:"省情基础",d:1},
@@ -412,13 +412,57 @@ const QUESTIONS = [
 {id:"LS069",c:"ls",q:"淮军是晚清重要军事政治集团。下列淮军将领与事迹对应正确的是（　）。",o:["刘铭传——首任台湾巡抚","丁汝昌——创办轮船招商局","聂士成——镇南关大捷","张树声——甲午黄海海战殉国"],a:0,e:"刘铭传（合肥人）1885年首任台湾巡抚，被誉为“台湾近代化之父”；丁汝昌（庐江人）为北洋水师提督，威海卫之战殉国（非黄海海战）。",s:"历史·近代·安徽",d:3},
 {id:"LS070",c:"ls",q:"“文房四宝”对应的主要产地，下列完全正确的一组是（　）。",o:["湖笔（浙江湖州）、徽墨（安徽歙县/绩溪）、宣纸（安徽泾县）、端砚（广东肇庆）","湖笔（安徽泾县）、徽墨（安徽歙县）、宣纸（安徽泾县）、歙砚（安徽歙县）","宣笔（安徽宣城）、徽墨（安徽）、宣纸（安徽）、歙砚（安徽）——均为安徽","宣笔（浙江）、徽墨（江西）、宣纸（福建）、端砚（安徽）"],a:0,e:"传统最优组合“湖笔、徽墨、宣纸、端砚”中安徽占其二；而安徽省内可集齐宣笔、徽墨、宣纸、歙砚“四宝”，故宣城称“中国文房四宝之城”。",s:"文化·安徽",d:2},
 
+/* —— 安徽省考真题精选（检索自 gwy.dtiku.cn 题库，答案经核实） —— */
+{id:"AH061",c:"ah",q:"2008年，安徽省开始实施合芜蚌________综合配套改革试验区建设，着力提升区域自主创新能力。",o:["城乡一体化","经济开发","城市经济圈","自主创新"],a:3,e:"合芜蚌自主创新综合配套改革试验区覆盖合肥、芜湖、蚌埠三市，2008年启动建设，是安徽建设创新型省份的关键平台，与皖江城市带承接产业转移示范区并称两大战略平台。（源自安徽历年省考真题）",s:"省情真题·发展战略",d:2},
+{id:"AH062",c:"ah",q:"安徽省“861”行动计划中的“6”是指（　）。",o:["六大城市经济区域","六大重点产业基地","六大基础工程","六所重点高等院校"],a:2,e:"“861”行动计划（2003年起实施）：“8”指八大重点产业基地，“6”指六大基础工程，“1”指当年确定的若干项重要工作任务。曾是安徽“十一五”“十二五”期间的发展总抓手。（源自安徽历年省考真题）",s:"省情真题·发展战略",d:2},
+{id:"AH063",c:"ah",q:"安徽省第九次党代会提出，要在“十二五”期间努力把安徽打造成“三个强省”。下列不属于“三个强省”的是（　）。",o:["工业强省","经济强省","文化强省","生态强省"],a:0,e:"“三个强省”指经济强省、文化强省、生态强省，是安徽省第九次党代会（2011年）提出的战略目标。（源自安徽历年省考真题）",s:"省情真题·发展战略",d:2},
+{id:"AH064",c:"ah",q:"近年来，安徽省自主创新战略平台建设取得突破性进展，一批企业的自主创新能力大幅提升。其中，成为安徽自主创新“一面旗帜”的企业是（　）。",o:["合肥江汽","马鞍山华菱重卡","芜湖奇瑞","铜陵铜基新材料"],a:2,e:"奇瑞汽车自芜湖起步，坚持自主研发发动机、变速箱等核心技术，成为中国自主品牌汽车的代表，被誉为安徽自主创新的一面旗帜。（源自安徽历年省考真题）",s:"省情真题·科技创新",d:1},
+{id:"AH065",c:"ah",q:"合肥综合性国家科学中心是国家创新体系建设的基础性平台。除拥有国家同步辐射实验室、合肥微尺度物质科学国家研究中心、磁约束核聚变实验室外，还启动建设了（　）国家实验室。",o:["中国聚变工程","量子信息科学","稳态强磁场","合肥先进光源"],a:1,e:"量子信息科学国家实验室依托中国科大在合肥启动建设，与同步辐射、微尺度物质科学、磁约束核聚变共同构成合肥大科学装置与国家实验室集群。（源自安徽面向全国重点高校定向招录选调生真题）",s:"省情真题·科技创新",d:3},
+{id:"AH066",c:"ah",q:"2023年起，安徽省为解决耕地细碎化问题、促进适度规模经营，部署开展的改革试点是（　）。",o:["“小田变大田”改革试点","“旱改水”土地改良工程","撂荒地复垦整治行动","退林还耕专项计划"],a:0,e:"《安徽省“小田变大田”改革试点工作实施方案》通过农田建设、土地整治，把零散小田整合为大田，逐步解决耕地细碎化问题，配套发展适度规模经营，是安徽深化农村改革的重要探索。（源自2023年安徽省考面试真题素材）",s:"省情真题·乡村振兴",d:2},
+/* —— 言语·成语词语（高频数据与释义引自公考加油站 gwy.dtiku.cn 真题统计） —— */
+{id:"CY001",c:"yy",q:"“一条一条地分析，形容分析得有条理、很细致”的成语是（　）。",o:["条分缕析","走马观花","浮光掠影","浅尝辄止"],a:0,e:"条分缕析：一条一条地分析，形容分析得有条理、很细致。后三者均含“粗略、不深入”之义，恰与语境相反。（释义引自公考加油站真题高频统计）",s:"成语·释义",d:1},
+{id:"CY002",c:"yy",q:"“水面的反光和一闪而过的影子，比喻观察粗疏不细致或学习浮泛不认真，了解不多、印象不深”指的是（　）。",o:["走马观花","浮光掠影","浅尝辄止","一目十行"],a:1,e:"浮光掠影：浮光——水面的反光；掠影——一掠而过的影子。比喻观察粗疏不细致或学习浮泛不认真。与“走马观花”近义，但更侧重“印象不深”。",s:"成语·释义",d:1},
+{id:"CY003",c:"yy",q:"“略微尝试一下就停止了，形容做事、学习等不肯深入下功夫”的成语是（　）。",o:["融会贯通","浅尝辄止","锲而不舍","追本溯源"],a:1,e:"浅尝辄止：略微尝试一下就停止，形容不肯深入下功夫。锲而不舍、融会贯通与之相反。",s:"成语·释义",d:1},
+{id:"CY004",c:"yy",q:"“骑在奔跑的马上看花，现比喻匆忙和粗略地观察事物”的成语是（　）。",o:["浮光掠影","走马观花","浅尝辄止","一目十行"],a:1,e:"走马观花：骑在奔跑的马上看花。原形容得意而愉快的心情，现多比喻匆忙粗略地观察事物。",s:"成语·释义",d:1},
+{id:"CY005",c:"yy",q:"“走马观花”“浮光掠影”“浅尝辄止”三个成语的共同语义指向是（　）。",o:["都形容观察或学习粗略、不深入","都形容景色优美、令人流连","都形容速度快、效率高","都形容数量多、种类全"],a:0,e:"三者均有“粗略、不深入”之义：走马观花重“看得粗略”，浮光掠影重“印象不深”，浅尝辄止重“不肯深入下功夫”。此为成语辨析常考的“近义族群”记忆法。",s:"成语·辨析",d:2},
+{id:"CY006",c:"yy",q:"“形容人或事物很多”的成语是（　）。它与“凤毛麟角”恰好构成反义关系。",o:["林林总总","寥寥无几","屈指可数","凤毛麟角"],a:0,e:"林林总总：形容人或事物很多。寥寥无几、屈指可数、凤毛麟角均表“少”，与题干相反。凤毛麟角更强调“珍贵而稀少”。",s:"成语·释义",d:1},
+{id:"CY007",c:"yy",q:"“宾主相见时分站在庭院两边相对行礼，现比喻平起平坐、彼此对等的关系”的成语是（　）。",o:["分庭抗礼","和衷共济","平分秋色","分道扬镳"],a:0,e:"分庭抗礼：分站在庭的两边、相对行礼，比喻平起平坐、互相对立。注意它是中性词，并非“礼让”之意。",s:"成语·释义",d:2},
+{id:"CY008",c:"yy",q:"他做事一向________，从不越雷池一步。横线处最恰当的成语是（　）。",o:["循规蹈矩","独树一帜","标新立异","特立独行"],a:0,e:"循规蹈矩：遵守规矩、不触及不破坏它，也形容拘泥保守、不懂变通。“从不越雷池一步”正扣其“守规矩”义。后三项均强调“与众不同、创新”，与语境相反。",s:"成语·语境",d:1},
+{id:"CY009",c:"yy",q:"“独立树立起一面旗帜，比喻开创新路或自成一家，与众不同”的成语是（　）。",o:["独树一帜","独占鳌头","一枝独秀","无出其右"],a:0,e:"独树一帜：独立树立起一面旗帜，比喻开创新路或自成一家、与众不同。常与“标新立异”连用辨析：独树一帜偏成果“自成一家”，标新立异偏主张“与众不同”。",s:"成语·释义",d:1},
+{id:"CY010",c:"yy",q:"“独树一帜”“标新立异”“特立独行”三个成语的共同语义指向是（　）。",o:["都强调与众不同、自成一家","都形容数量稀少、极为罕见","都强调遵守规则、按部就班","都形容技艺高超、令人赞叹"],a:0,e:"三者均含“与众不同”义：独树一帜重“自成一家”，标新立异重“提出新见解”，特立独行重“行为独特不随流”。同族群归纳记忆可提高辨析效率。",s:"成语·辨析",d:2},
+{id:"CY011",c:"yy",q:"“指一经形成就不再改变”的成语是（　），其感情色彩为贬义。",o:["一成不变","亘古不变","墨守成规","始终如一"],a:0,e:"一成不变：一经形成就不再改变，含贬义（不知变通）。亘古不变、始终如一为中性偏褒；墨守成规贬义但义为“守着老规矩不肯改进”。",s:"成语·释义+色彩",d:1},
+{id:"CY012",c:"yy",q:"“原指按照一定门类、依照一定次序组织文章结构，现指办事按照一定的规矩、遵循一定的程序”的成语是（　）。",o:["按部就班","循序渐进","有条不紊","环环相扣"],a:0,e:"按部就班：部——门类；班——次序。原指作文组织结构，现指按规矩程序办事。在真题中常含“缺乏创新”的贬义倾向，与“循序渐进”（褒义，强调逐步深入）辨析。",s:"成语·释义",d:2},
+{id:"CY013",c:"yy",q:"“凤凰的毛，麒麟的角。比喻极为珍贵而稀少的人或事物”的成语是（　）。",o:["凤毛麟角","鳞次栉比","屈指可数","百里挑一"],a:0,e:"凤毛麟角：比喻极为珍贵而稀少的人或事物（褒义）。鳞次栉比形容房屋等排列密集，勿因“鳞”字误选。",s:"成语·释义",d:1},
+{id:"CY014",c:"yy",q:"下列成语中，感情色彩均为褒义的一组是（　）。",o:["凤毛麟角、珠联璧合","一成不变、按部就班","浮光掠影、浅尝辄止","未置可否、分庭抗礼"],a:0,e:"凤毛麟角（褒）、珠联璧合（褒）。一成不变、按部就班、浮光掠影、浅尝辄止均为贬义倾向；未置可否、分庭抗礼为中性。褒贬色彩是言语题排除干扰项的常用抓手。",s:"成语·色彩",d:2},
+{id:"CY015",c:"yy",q:"“不说行，也不说不行。指不发表意见，没有表明态度”的成语是（　）。",o:["未置可否","不置可否","不置褒贬","莫衷一是"],a:0,e:"未置可否：不表明态度。莫衷一是指大家意见分歧、不能得出一致结论，与“个人不表态”不同。真题中也写作“不置可否”，两者常互为干扰项。",s:"成语·释义",d:2},
+{id:"CY016",c:"yy",q:"“珍珠串在一起，美玉合在一起。比喻美好的人或事物聚合在一起”的成语是（　）。",o:["珠联璧合","珠光宝气","交相辉映","相得益彰"],a:0,e:"珠联璧合：璧——美玉。比喻美好的人或事物聚合在一起（褒义），常与“相得益彰”搭配出现：“二者珠联璧合、相得益彰”。",s:"成语·释义",d:1},
+{id:"CY017",c:"yy",q:"“本指顺应天命而产生，后泛指顺应某种时机、条件、需要等而产生”的成语是（　）。",o:["应运而生","顺势而为","乘势而上","油然而生"],a:0,e:"应运而生：顺应时机、条件、需要而产生，多用于新事物、新业态，是真题高频成语。油然而生指某种感情自然产生，对象是“情感”，勿混。",s:"成语·释义",d:1},
+{id:"CY018",c:"yy",q:"“只有这样一个，找不出第二个来。形容唯一的、难得的”的成语是（　）。",o:["独一无二","举世无双","无与伦比","首屈一指"],a:0,e:"独一无二：唯一的、没有相同或可比的。无与伦比偏“好到没有能赶上的程度”（多形容成就、美好程度），举世无双偏“世上没有第二个”（数量），角度略有差异。",s:"成语·辨析",d:2},
+{id:"CY019",c:"yy",q:"“厚：过分。非：责备。指不可以过分责备”的成语是（　）。",o:["无可厚非","无可非议","无可奈何","无可辩驳"],a:0,e:"无可厚非：虽有缺点，但可以理解或原谅（不可过分责备）。注意与“无可非议”辨析：无可非议指“完全没有可指责之处”，程度更重——言语题高频陷阱对。",s:"成语·辨析",d:2},
+{id:"CY020",c:"yy",q:"“在同一时间里来谈论，指相提并论、一样看待”的成语是（　）。",o:["同日而语","等量齐观","一概而论","混为一谈"],a:0,e:"同日而语：放在同一时间谈论、一样看待，多用于否定句“不可同日而语”（前后差距大）。等量齐观指对有差别的事物同等看待，常用于否定“不可等量齐观”。",s:"成语·辨析",d:2},
+{id:"CY021",c:"yy",q:"“方：正在。兴：兴起。艾：停止、完结。指事物正在兴起发展，尚未终止”的成语是（　）。",o:["方兴未艾","蒸蒸日上","如日中天","欣欣向荣"],a:0,e:"方兴未艾：事物正在兴起发展、尚未终止。它在公考真题中出现频次位居前列（安徽卷亦有考察），多用于新兴产业、新业态，褒义。",s:"成语·高频",d:1},
+{id:"CY022",c:"yy",q:"“地位重要，一举一动都足以影响到全局”的成语是（　）。",o:["举足轻重","至关重要","牵一发而动全身","不可或缺"],a:0,e:"举足轻重：所处地位重要，一举一动足以影响全局。区别于“至关重要（事物本身极重要）”——举足轻重强调“地位与影响力”。",s:"成语·高频",d:1},
+{id:"CY023",c:"yy",q:"“接连不断地出现，没有穷尽”的成语是（　）。",o:["层出不穷","司空见惯","屡见不鲜","源源不断"],a:0,e:"层出不穷：接连出现、没有穷尽，多指新生事物或问题。屡见不鲜、司空见惯强调“见得多了不觉得奇怪”，义在“常见”而非“频出”。",s:"成语·高频",d:1},
+{id:"CY024",c:"yy",q:"“两者互相配合，双方的能力和作用更能显示出来”的成语是（　）。",o:["相得益彰","相辅相成","交相辉映","相濡以沫"],a:0,e:"相得益彰：互相配合，双方长处更能显现（重在“互相增色”）。相辅相成：互相补充、互相促成（重在“缺一不可”）。一字之差是高频考点。",s:"成语·辨析",d:2},
+{id:"CY025",c:"yy",q:"“指两件事物互相配合、互相促成，缺一不可”的成语是（　）。",o:["相辅相成","相得益彰","并行不悖","互为表里"],a:0,e:"相辅相成：互相配合促成、缺一不可。与相得益彰的核心区别：“相辅相成”强调依存关系，“相得益彰”强调效果增色。",s:"成语·辨析",d:2},
+{id:"CY026",c:"yy",q:"依次填入两句话横线处最恰当的一组成语是：（1）两种非遗技艺同台展演，________，现场观众大饱眼福。（2）理论与实践________，脱离实践的理论只能是空谈。",o:["相得益彰 / 相辅相成","相辅相成 / 相得益彰","交相辉映 / 并行不悖","珠联璧合 / 混为一谈"],a:0,e:"（1）句“同台展演、效果增色”→相得益彰；（2）句“缺一不可的依存关系”→相辅相成。双空辨析是近年省考言语的典型命题形式。",s:"成语·语境双空",d:3},
+{id:"CY027",c:"yy",q:"“赞美所看到的事物好到极点，多用于赞叹精妙的技艺或作品”的成语是（　）。",o:["叹为观止","拍案叫绝","赞不绝口","交口称赞"],a:0,e:"叹为观止：赞美看到的事物好到极点（叹：赞叹；观止：看到这里就够了）。注意其对象是“看到的事物”，不能用于听觉艺术（如歌曲）——高频误用点。",s:"成语·高频",d:2},
+{id:"CY028",c:"yy",q:"“形容彼此相差很远、大不相同”的成语是（　）。",o:["大相径庭","截然不同","天壤之别","判若两人"],a:0,e:"大相径庭：彼此相差很远、大不相同，多作贬义或中性。径——小路；庭——院子。“大相径庭”侧重“相差悬殊”，常用于观点、说法之间的差距。",s:"成语·释义",d:1},
+{id:"CY029",c:"yy",q:"“把各方面的知识和道理融合贯穿在一起，从而得到全面透彻的理解”的成语是（　）。",o:["融会贯通","触类旁通","举一反三","豁然贯通"],a:0,e:"融会贯通：融合贯穿各方面知识道理，得到全面透彻理解。融会——融合领会；贯通——彻底理解。触类旁通、举一反三强调“由一类推及其他”，程度较浅。",s:"成语·释义",d:1},
+{id:"CY030",c:"yy",q:"“彼此之间忧喜祸福都共同承受，形容同甘共苦、关系密切”的成语是（　）。",o:["休戚与共","休戚相关","患难与共","风雨同舟"],a:0,e:"休戚与共：祸福共享、同甘共苦。休——喜悦；戚——忧愁。“休戚相关”仅指彼此关联（程度较浅），“休戚与共”强调共同承受（程度更深），两者是高频辨析对。",s:"成语·辨析",d:2},
+{id:"CY031",c:"yy",q:"依次填入最恰当的词语是：千百年来的农耕文明在江淮大地渐渐________下来，成为乡土文化最深厚的底色。",o:["积淀","积累","堆积","积攒"],a:0,e:"积淀：积累沉淀，多指思想、文化等在漫长历史中的积聚，契合“文化、文明”语境；积累为通用词；堆积、积攒偏具体物或钱财。",s:"词语·辨析",d:2},
+{id:"CY032",c:"yy",q:"依次填入最恰当的词语是：这座千年古镇________着数代人的集体记忆，一砖一瓦都是乡愁的注脚。",o:["承载","承担","承受","装载"],a:0,e:"承载：承受物的重量、托物运载，常与“记忆、文化、功能、希望”等抽象宾语搭配；承担多与“责任、任务”搭配；承受多与“压力、损失”搭配；装载偏具体货物。",s:"词语·辨析",d:2},
+{id:"CY033",c:"yy",q:"“经历长久的时间而更加鲜活、更有活力”的成语是（　）。",o:["历久弥新","经久不衰","老而弥坚","亘古常新"],a:0,e:"历久弥新：经历长久时间更加鲜活（弥——更加）。多形容文化、精神、作品等随时间推移更显价值，是近年真题超高频成语。",s:"成语·高频",d:1},
+{id:"CY034",c:"yy",q:"“（才能、本领）全部显露出来，超出众人”的成语是（　）。",o:["脱颖而出","锋芒毕露","崭露头角","出类拔萃"],a:0,e:"脱颖而出：本领全部显露、超出众人（颖——锥子尖，锥处囊中其末立见）。崭露头角指初显才能（起步阶段），锋芒毕露常含贬义（过于外露），注意程度与色彩差异。",s:"成语·高频",d:2},
+
 ];
 
 const CATS = [
   {id:"ah", name:"安徽省情", icon:"🗺️", desc:"地理区划 · 经济科技 · 文化名片 · 发展战略"},
   {id:"pl", name:"政治理论", icon:"📖", desc:"新思想 · 二十大 · 三中/四中全会 · 新质生产力"},
   {id:"sz", name:"时政热点", icon:"📰", desc:"十五五 · 2026两会 · 建党105周年 · 科技大事"},
-  {id:"ls", name:"历史人文", icon:"🏺", desc:"安徽名人 · 徽文化 · 古代史 · 近现代史"}
+  {id:"ls", name:"历史人文", icon:"🏺", desc:"安徽名人 · 徽文化 · 古代史 · 近现代史"},
+  {id:"yy", name:"言语成语", icon:"🔤", desc:"安徽省考高频成语词语 · 释义 · 辨析 · 语境"}
 ];
 const catName = c => (CATS.find(x=>x.id===c)||{}).name || "未分类";
 
@@ -426,13 +470,14 @@ const catName = c => (CATS.find(x=>x.id===c)||{}).name || "未分类";
 const LS_KEY = "wtt_state_v1";
 const defaultState = () => ({
   records:{},        // qid -> {r:对次数, w:错次数, last:'r'|'w', ts}
+  srs:{},            // qid -> {iv:间隔天数, ef:难度系数, n:连对次数, due:下次复习时间戳, last, ts}
   wrong:[],          // 错题 id 有序列表
   fav:[],            // 收藏 id
   custom:[],         // 导入的题目（覆盖/新增）
   daily:{},          // 'YYYY-MM-DD' -> {n, r}
   exams:[],          // 测验历史
   session:null,      // 进行中的练习/测验
-  settings:{autoRemoveWrong:true, dark:false, repo:{user:"",repo:"ah-exam-bank",branch:"main",giteeUser:"",custom:"",auto:true}},
+  settings:{autoRemoveWrong:true, dark:false, dailyNew:15, repo:{user:"",repo:"ah-exam-bank",branch:"main",giteeUser:"",custom:"",auto:true}},
   sync:null            // 云端同步信息 {version, at, source}
 });
 let S = defaultState();
@@ -469,17 +514,17 @@ function streak(){
 /* ================= 视图框架 ================= */
 const $ = s => document.querySelector(s);
 const app = $("#app");
-const VIEWS = [["home","首页"],["practice","练习"],["exam","测验"],["wrong","错题本"],["fav","收藏"],["stats","统计"],["bank","题库"],["cloud","云端"]];
+const VIEWS = [["home","首页"],["review","今日"],["practice","练习"],["exam","测验"],["wrong","错题本"],["fav","收藏"],["stats","统计"],["bank","题库"],["cloud","云端"]];
 let cur = {name:"home"};
 function renderNav(){
   $("#nav").innerHTML = VIEWS.map(v=>`<button data-v="${v[1]}" class="${cur.name===v[0]?"on":""}">${v[1]}</button>`).join("");
-  $("#nav").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.v==="练习"?"practice":b.dataset.v==="测验"?"exam":b.dataset.v==="错题本"?"wrong":b.dataset.v==="收藏"?"fav":b.dataset.v==="统计"?"stats":b.dataset.v==="题库"?"bank":b.dataset.v==="云端"?"cloud":"home"));
+  $("#nav").querySelectorAll("button").forEach(b=>b.onclick=()=>go(b.dataset.v==="今日"?"review":b.dataset.v==="练习"?"practice":b.dataset.v==="测验"?"exam":b.dataset.v==="错题本"?"wrong":b.dataset.v==="收藏"?"fav":b.dataset.v==="统计"?"stats":b.dataset.v==="题库"?"bank":b.dataset.v==="云端"?"cloud":"home"));
   $("#foot").innerHTML = `皖题通 · 内置题库 ${BANK_VERSION} · 学习数据仅存于本机浏览器 · 可在「题库」页导入更新包`;
 }
 function go(name, params){
   cur = {name, params:params||{}};
   window.scrollTo(0,0);
-  const R = {home:renderHome, practice:renderPracticeEntry, exam:renderExamSetup, wrong:renderWrong, fav:renderFav, stats:renderStats, bank:renderBank, cloud:renderCloud,
+  const R = {home:renderHome, review:renderReview, practice:renderPracticeEntry, exam:renderExamSetup, wrong:renderWrong, fav:renderFav, stats:renderStats, bank:renderBank, cloud:renderCloud,
              practicing:renderPracticeSession, examining:renderExamSession, examdone:renderExamResult, practicedone:renderPracticeDone};
   (R[name]||renderHome)();
   renderNav();
@@ -503,20 +548,24 @@ function renderHome(){
   let doneN=0, rN=0, wN=0;
   qs.forEach(q=>{ const rec=S.records[q.id]; if(rec){ doneN++; rN+=rec.r; wN+=rec.w; } });
   const acc = (rN+wN)? Math.round(rN/(rN+wN)*100) : 0;
+  const dueN = dueList().length;
+  const masterN = Object.values(S.srs).filter(r=>r.iv>=30).length;
   app.innerHTML = `
   <div class="hero">
     <h1>常识判断 · 高频考点刷题</h1>
     <p>覆盖安徽省情、政治理论、时政热点、历史人文四大模块。基于近年安徽省考常识命题趋势与 2026 年最新时政考点编制；题库支持导入更新包持续扩充。</p>
     ${S.sync?`<p style="margin-top:6px;font-size:12px;opacity:.85">☁ 云端题库 ${esc(S.sync.version)} · 同步于 ${new Date(S.sync.at).toLocaleString("zh-CN",{hour12:false})} · ${esc(S.sync.source)}</p>`:""}
     <div class="row">
-      <button class="btn" id="daily20">⚡ 今日速刷 20 题</button>
+      <button class="btn" id="daily20">🧠 今日学习</button>
+      <button class="btn ghost" id="quick20">⚡ 速刷 20 题</button>
       <button class="btn ghost" data-go="exam">📋 模拟测验</button>
       <button class="btn ghost" data-go="wrong">🔁 错题重练</button>
     </div>
   </div>
   <div class="statrow">
     <div class="stat"><b>${tot}</b><span>题库总题量</span></div>
-    <div class="stat"><b>${doneN}</b><span>已刷题数</span></div>
+    <div class="stat"><b>${dueN}</b><span>待复习(已到期)</span></div>
+    <div class="stat"><b>${masterN}</b><span>已掌握</span></div>
     <div class="stat"><b>${acc}%</b><span>总正确率</span></div>
     <div class="stat"><b>${S.wrong.length}</b><span>待攻克错题</span></div>
     <div class="stat"><b>${streak()}</b><span>连续打卡(天)</span></div>
@@ -538,7 +587,8 @@ function renderHome(){
     <div style="margin-top:10px"><button class="btn small" id="resumeS">继续作答</button>
     <button class="btn ghost small" id="dropS" style="margin-left:8px">放弃</button></div></div>`:""}
   `;
-  $("#daily20").onclick=()=>{
+  $("#daily20").onclick=()=>go("review");
+  $("#quick20").onclick=()=>{
     const pool=shuffle(qs).slice(0,20);
     startPractice(pool.map(q=>q.id), "今日速刷 20 题（全模块随机）");
   };
@@ -576,14 +626,17 @@ function renderPracticeEntry(){ renderHome(); }
 function renderPracticeSession(){
   const ses = S.session;
   if(!ses || ses.kind!=="practice") return go("home");
-  const qs = ses.qids.map(byId).filter(Boolean);
+  const qs = ses.qids.map(k=>byId(String(k).split("#")[0])).filter(Boolean);
   if(!qs.length){ S.session=null; save(); return go("home"); }
   if(ses.idx>=qs.length){ return renderPracticeDone(); }
-  const q = qs[ses.idx];
-  const chosen = ses.answers[q.id];
+  const key = String(ses.qids[ses.idx]);
+  const q = byId(key.split("#")[0]);
+  const chosen = ses.answers[key];
   const answered = chosen!==undefined;
   const right = answered && chosen===q.a;
   const favOn = S.fav.includes(q.id);
+  const srsRec = answered ? (S.srs[q.id]||null) : null;
+  const nextDue = srsRec ? fmtDue(srsRec.due) : null;
   app.innerHTML = `
   <div class="qhead">
     <span class="tag">${esc(ses.label)}</span>
@@ -601,34 +654,126 @@ function renderPracticeSession(){
         return `<button class="${cls}" data-i="${i}" ${answered?"disabled":""}><span class="k">${optLetter(i)}</span><span>${esc(t)}</span></button>`;
       }).join("")}
     </div>
-    ${answered?`<div class="expl"><b>${right?"✓ 回答正确":"✗ 回答错误，正确答案 "+optLetter(q.a)}</b><br>${esc(q.e||"（暂无解析）")}</div>`:""}
+    ${answered?`<div class="expl"><b>${right?"✓ 回答正确":"✗ 回答错误，正确答案 "+optLetter(q.a)}</b><br>${esc(q.e||"（暂无解析）")}${ses.mode==="review"&&srsRec?`<br><span style="color:var(--brand2)">🧠 下次复习：${nextDue}（当前间隔 ${srsRec.iv>0?srsRec.iv+" 天":"10 分钟后重学"}）${!right?"· 本题稍后将在本轮重现":""}</span>`:""}</div>`:""}
     <div class="qfoot">
       ${answered? `<button class="btn" id="pNext">下一题 →</button>` : `<span class="muted">点击选项作答（可按 1-4 / A-D 键）</span>`}
       <button class="btn ghost" id="pQuit">结束练习</button>
     </div>
   </div>
   <div class="card">
-    <div class="muted" style="margin-bottom:8px">答题卡：<span style="color:var(--ok)">■已做对</span> <span style="color:var(--bad)">■做错</span> <span style="color:var(--brand2)">■当前</span></div>
-    <div class="sheet">${qs.map((x,i)=>{
-      let cls=""; const an=ses.answers[x.id];
+    <div class="muted" style="margin-bottom:8px">答题卡：<span style="color:var(--ok)">■已做对</span> <span style="color:var(--bad)">■做错</span> <span style="color:var(--brand2)">■当前</span>${ses.mode==="review"?` <span style="color:var(--gold)">◆稍后重现</span>`:""}</div>
+    <div class="sheet">${ses.qids.map((k,i)=>{
+      const x=byId(String(k).split("#")[0]); if(!x) return "";
+      let cls=""; const an=ses.answers[k];
       if(an!==undefined) cls = an===x.a?"ok":"bad";
       if(i===ses.idx) cls="cur "+cls;
-      return `<button class="${cls}" data-j="${i}">${i+1}</button>`;
+      if(String(k).split("#")[1]) cls+=" ans";
+      return `<button class="${cls}" data-j="${i}" title="${String(k).split("#")[1]?"重学题":""}">${i+1}</button>`;
     }).join("")}</div>
   </div>`;
   app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answerPractice(+b.dataset.i));
   const nb=$("#pNext"); if(nb) nb.onclick=()=>{ ses.idx++; save(); renderPracticeSession(); };
-  $("#pQuit").onclick=()=>confirmBox("结束本次练习？","已作答的统计将保留，未答题目不计错题。",()=>{ S.session=null; save(); go("home"); });
+  $("#pQuit").onclick=()=>confirmBox("结束本次练习？","已作答的统计与记忆进度将保留，未答题目不计错题。",()=>{ S.session=null; save(); go("home"); });
   bindFavBtn(q.id);
   app.querySelectorAll(".sheet button").forEach(b=>b.onclick=()=>{ ses.idx=+b.dataset.j; save(); renderPracticeSession(); });
 }
 function answerPractice(i){
-  const ses=S.session; const q=byId(ses.qids[ses.idx]);
-  if(ses.answers[q.id]!==undefined) return;
-  ses.answers[q.id]=i;
+  const ses=S.session; if(!ses) return;
+  const key=String(ses.qids[ses.idx]); const q=byId(key.split("#")[0]);
+  if(!q || ses.answers[key]!==undefined) return;
+  ses.answers[key]=i;
   const right = i===q.a;
   recordAnswer(q, right);
-  renderPracticeSession();
+  gradeSRS(q.id, right);
+  if(!right && ses.mode==="review"){
+    ses.qids.push(q.id+"#r"+(++ses.requeue));
+  }
+  save(); renderPracticeSession();
+}
+/* ================= 墨墨式记忆调度（间隔重复） ================= */
+const DAY = 86400000;
+function fmtDue(ts){
+  if(ts<=Date.now()) return "已到期";
+  const diff=ts-Date.now();
+  if(diff < 12*3600000){ const h=Math.floor(diff/3600000), m=Math.max(1,Math.floor(diff%3600000/60000)); return h>0? h+"小时后" : m+"分钟后"; }
+  const d = Math.ceil(diff/DAY);
+  const dt = new Date(ts);
+  return d<=1?"明天":d<7?(d+" 天后（"+(dt.getMonth()+1)+"/"+dt.getDate()+"）"):(dt.getFullYear()==new Date().getFullYear()?((dt.getMonth()+1)+"月"+dt.getDate()+"日"):(dt.getFullYear()+"/"+(dt.getMonth()+1)+"/"+dt.getDate()));
+}
+function gradeSRS(qid, right){
+  const r = S.srs[qid] || {iv:0, ef:2.35, n:0, due:0, last:"", ts:0};
+  if(right){
+    r.n++;
+    if(r.n===1) r.iv=1;
+    else if(r.n===2) r.iv=3;
+    else if(r.n===3) r.iv=7;
+    else r.iv=Math.min(365, Math.round(r.iv*r.ef));
+    r.ef=Math.min(2.8, Math.max(1.7, r.ef+0.04));
+  } else {
+    r.n=0; r.iv=0; r.ef=Math.max(1.7, r.ef-0.18);
+  }
+  r.due = Date.now() + (r.iv>0 ? r.iv*DAY : 10*60000);
+  r.last = right?"r":"w"; r.ts=Date.now();
+  S.srs[qid]=r;
+  return r;
+}
+function dueList(){
+  const now=Date.now();
+  return Object.keys(S.srs).filter(id=>S.srs[id].due<=now && byId(id)).sort((a,b)=>S.srs[a].due-S.srs[b].due);
+}
+function srsCounts(){
+  const vals=Object.values(S.srs);
+  return {
+    mastered: vals.filter(r=>r.iv>=30).length,
+    learning: vals.filter(r=>r.iv>0&&r.iv<30).length,
+    due: dueList().length,
+    fresh: allQuestions().filter(q=>!S.srs[q.id]).length
+  };
+}
+function reviewForecast(){
+  const now=Date.now(); const b=[["今日",0],["明天",0],["3天内",0],["7天内",0],["15天内",0],["更远",0]];
+  Object.values(S.srs).forEach(r=>{ const d=(r.due-now)/DAY;
+    if(d<=0) b[0][1]++; else if(d<=1) b[1][1]++; else if(d<=3) b[2][1]++; else if(d<=7) b[3][1]++; else if(d<=15) b[4][1]++; else b[5][1]++; });
+  return b;
+}
+function startReview(newQuota){
+  const due = dueList();
+  const fresh = shuffle(allQuestions().filter(q=>!S.srs[q.id])).slice(0,newQuota).map(q=>q.id);
+  // 交织排列：到期复习与新学交替，提升记忆效果
+  const qids=[]; const a=due.slice(), b=fresh.slice();
+  while(a.length||b.length){ if(a.length) qids.push(a.shift()); if(b.length) qids.push(b.shift()); }
+  if(!qids.length) return toast("今日暂无可学习题目，都复习完啦 🎉");
+  S.session={kind:"practice", mode:"review", qids, idx:0, answers:{}, label:"今日学习 · 复习"+due.length+" · 新学"+fresh.length, start:Date.now(), requeue:0};
+  save(); go("practicing");
+}
+function renderReview(){
+  const c=srsCounts(); const fc=reviewForecast();
+  const done=(S.daily[todayKey()]||{}).n||0;
+  app.innerHTML=`
+  <h2 class="vt">今日学习<small>墨墨式间隔重复 · 到期复习 + 新学</small></h2>
+  <div class="statrow">
+    <div class="stat"><b>${c.due}</b><span>待复习(已到期)</span></div>
+    <div class="stat"><b>${c.fresh}</b><span>未接触新题</span></div>
+    <div class="stat"><b>${c.mastered}</b><span>已掌握(≥30天)</span></div>
+    <div class="stat"><b>${c.learning}</b><span>学习中</span></div>
+    <div class="stat"><b>${done}</b><span>今日已答题</span></div>
+  </div>
+  <div class="card">
+    <b>🧠 开始今日记忆任务</b>
+    <p class="muted" style="margin:8px 0 12px">将为你安排 <b style="color:var(--brand)">${c.due} 道到期复习</b>${c.due?"":""} + 新学额度内的题目（复习与新学交替出现）。答错的题会在本轮稍后重现，答对则自动延长下次复习间隔：1天 → 3天 → 7天 → 14天 → 1个月 → 更久，直至掌握。</p>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="muted">新学额度</span>
+      <select id="rvNew" style="width:auto"><option value="5">5 题</option><option value="10">10 题</option><option value="15" selected>15 题</option><option value="20">20 题</option><option value="30">30 题</option></select>
+      <button class="btn" id="rvGo">开始今日学习</button>
+    </div>
+  </div>
+  <div class="card"><b>未来复习负荷</b><div class="bars" style="margin-top:12px">
+    ${fc.map(([label,n])=>`<div class="brow"><span>${label}</span><div class="track"><i style="width:${Math.min(100,n*12)}%"></i></div><span>${n} 题</span></div>`).join("")}
+  </div><p class="muted" style="margin-top:8px">按遗忘曲线排期：越是临近到期、越是答错过/久未复习的题，越优先安排。</p></div>
+  <div class="card"><b>记忆法说明</b>
+    <p class="muted" style="margin:10px 0 0">本模式参考"墨墨背单词"的记忆理念：每道题有独立的记忆强度（间隔天数与难度系数），答对逐步拉长复习间隔、答错立即缩短并当天重现；间隔达到 30 天以上视为"已掌握"。普通"练习/测验"模式中作答的题同样会纳入记忆调度。</p>
+  </div>`;
+  $("#rvGo").onclick=()=>startReview(+$("#rvNew").value);
 }
 function renderPracticeDone(){
   const ses=S.session;
@@ -865,6 +1010,17 @@ function renderStats(){
     }).join("")}
     </div>
   </div>
+  <div class="card"><b>🧠 记忆状态（墨墨式间隔重复）</b>
+    ${(()=>{ const c=srsCounts(); const fc=reviewForecast(); return `
+    <div class="statrow" style="margin-top:12px">
+      <div class="stat"><b>${c.mastered}</b><span>已掌握(≥30天)</span></div>
+      <div class="stat"><b>${c.learning}</b><span>学习中</span></div>
+      <div class="stat"><b>${c.due}</b><span>待复习(已到期)</span></div>
+      <div class="stat"><b>${c.fresh}</b><span>未接触</span></div>
+    </div>
+    <div class="bars" style="margin-top:6px">${fc.map(([label,n])=>`<div class="brow"><span>${label}复习</span><div class="track"><i style="width:${Math.min(100,n*12)}%;background:linear-gradient(90deg,var(--brand2),var(--brand))"></i></div><span>${n} 题</span></div>`).join("")}</div>`; })()}
+    <div style="margin-top:10px"><button class="btn small" id="stGoReview">去今日学习</button></div>
+  </div>
   <div class="card"><b>近 12 周刷题热力图</b>
     <div class="heat" style="margin-top:12px">${heatHTML()}</div>
     <div class="muted" style="margin-top:8px">浅→深表示当日刷题量：0 · 1-9 · 10-19 · 20-39 · 40+</div>
@@ -875,6 +1031,7 @@ function renderStats(){
       return '<div style="margin-top:10px">'+CATS.map(c=>{ const n=qs2.filter(q=>q.c===c.id).length;
         return n?`<span class="tag" style="font-size:12.5px;padding:3px 10px">${c.icon}${c.name} ${n} 题</span>`:""; }).join(" ")+"</div>"; })()}
   </div>`;
+  const gr=$("#stGoReview"); if(gr) gr.onclick=()=>go("review");
 }
 function heatHTML(){
   const weeks=[], now=new Date();
@@ -1107,7 +1264,7 @@ function normQ(raw){
   if(!o||o.length<2) return null;
   let a=raw.a; if(typeof a==="string") a="ABCD".indexOf(a.toUpperCase());
   if(typeof a!=="number"||a<0||a>=o.length) a=0;
-  const c=["ah","pl","sz","ls"].includes(raw.c)?raw.c:(raw.c==="other"?"ls":"sz");
+  const c=["ah","pl","sz","ls","yy"].includes(raw.c)?raw.c:(raw.c==="other"?"ls":"sz");
   const id=String(raw.id||("C"+Date.now()+"-"+Math.random().toString(36).slice(2,6)));
   return {id, c, q:String(raw.q), o, a:Math.floor(a), e:raw.e?String(raw.e):"", s:raw.s?String(raw.s):"导入题", d:[1,2,3].includes(raw.d)?raw.d:2};
 }
@@ -1132,11 +1289,11 @@ function bindFavBtn(qid){
 /* ================= 键盘 & 主题 ================= */
 document.addEventListener("keydown",e=>{
   if(cur.name==="practicing"&&S.session){
-    const ses=S.session, q=byId(ses.qids[ses.idx]);
+    const ses=S.session, key=String(ses.qids[ses.idx]), q=byId(key.split("#")[0]);
     if(!q) return;
     const map={"1":0,"2":1,"3":2,"4":3,"a":0,"b":1,"c":2,"d":3,"A":0,"B":1,"C":2,"D":3};
-    if(e.key in map && ses.answers[q.id]===undefined){ answerPractice(map[e.key]); return; }
-    if((e.key==="Enter"||e.key==="ArrowRight")&&ses.answers[q.id]!==undefined){ ses.idx++; save(); renderPracticeSession(); }
+    if(e.key in map && ses.answers[key]===undefined){ answerPractice(map[e.key]); return; }
+    if((e.key==="Enter"||e.key==="ArrowRight")&&ses.answers[key]!==undefined){ ses.idx++; save(); renderPracticeSession(); }
   }
 });
 const themeBtn=$("#themeBtn");
