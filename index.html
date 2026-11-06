@@ -176,7 +176,7 @@ label.ck{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
 <div id="toast"></div>
 <script>
 /* ================= 题库（内置，支持导入更新包） ================= */
-const BANK_VERSION = "v1.6.1（2026-11-06）";
+const BANK_VERSION = "v1.6.2（2026-11-06）";
 const QUESTIONS = [
 
 /* —— 省情（AH001-066 基础+精选；AH067-116 省情扩容 v1.5：2025数据/十四五收官/三条高铁/十五五/党代会） —— */
@@ -1309,7 +1309,7 @@ function renderPracticeSession(){
         return `<button class="${cls}" data-i="${i}" ${answered?"disabled":""}><span class="k">${optLetter(i)}</span><span>${esc(t)}${answered&&q.oe&&q.oe[i]?`<span class="oe">${esc(q.oe[i])}</span>`:""}</span></button>`;
       }).join("")}
     </div>
-    ${answered?`<div class="expl"><b>${right?"✓ 回答正确":"✗ 回答错误，正确答案 "+optLetter(q.a)}</b><br>${esc(q.e||"（暂无解析）")}${ses.mode==="review"&&srsRec?`<br><span style="color:var(--brand2)">🧠 下次复习：${nextDue}（当前间隔 ${srsRec.iv>0?srsRec.iv+" 天":"10 分钟后重学"}）${!right?"· 本题稍后将在本轮重现":""}</span>`:""}</div>`:""}
+    ${answered?`<div class="expl"><b>${right?"✓ 回答正确":"✗ 回答错误，正确答案 "+optLetter(q.a)}</b><br>${esc(q.e||"（暂无解析）")}${ses.mode==="review"&&srsRec?`<br><span style="color:var(--brand2)">🧠 下次复习：${nextDue}（当前间隔 ${srsRec.iv>0?srsRec.iv+" 天":"0 天 · 立即到期"}）${!right?"· 本题稍后将在本轮重现":""}</span>`:""}</div>`:""}
     <div class="qfoot">
       ${answered? `<button class="btn" id="pNext">下一题 →</button>` : `<span class="muted">点击选项作答（可按 1-4 / A-D 键）</span>`}
       <button class="btn ghost" id="pQuit">结束练习</button>
@@ -1367,7 +1367,7 @@ function gradeSRS(qid, right){
   } else {
     r.n=0; r.iv=0; r.ef=Math.max(1.7, r.ef-0.18);
   }
-  r.due = Date.now() + (r.iv>0 ? r.iv*DAY : 10*60000);
+  r.due = Date.now() + (r.iv>0 ? r.iv*DAY : 0); // v1.6.2: 答错立即到期，错题当场进入待复习/今日学习（原为+10分钟，练完查看时未到期）
   r.last = right?"r":"w"; r.ts=Date.now();
   S.srs[qid]=r;
   return r;
