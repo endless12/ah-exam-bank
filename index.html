@@ -176,7 +176,7 @@ label.ck{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
 <div id="toast"></div>
 <script>
 /* ================= 题库（内置，支持导入更新包） ================= */
-const BANK_VERSION = "v1.6（2026-11-05）";
+const BANK_VERSION = "v1.6.1（2026-11-06）";
 const QUESTIONS = [
 
 /* —— 省情（AH001-066 基础+精选；AH067-116 省情扩容 v1.5：2025数据/十四五收官/三条高铁/十五五/党代会） —— */
@@ -1091,6 +1091,7 @@ const QUESTIONS = [
 
 
 
+
 const CATS = [
   {id:"ah", name:"安徽省情", icon:"🗺️", desc:"地理区划 · 经济科技 · 文化名片 · 发展战略"},
   {id:"pl", name:"政治理论", icon:"📖", desc:"新思想 · 二十大 · 四中全会 · 法治常识"},
@@ -1113,7 +1114,7 @@ const defaultState = () => ({
   daily:{},          // 'YYYY-MM-DD' -> {n, r}
   exams:[],          // 测验历史
   session:null,      // 进行中的练习/测验
-  settings:{autoRemoveWrong:true, dark:false, dailyNew:15, repo:{user:"",repo:"ah-exam-bank",branch:"main",giteeUser:"",custom:"",auto:true}},
+  settings:{autoRemoveWrong:false, dark:false, dailyNew:15, repo:{user:"",repo:"ah-exam-bank",branch:"main",giteeUser:"",custom:"",auto:true}},
   sync:null            // 云端同步信息 {version, at, source}
 });
 let S = defaultState();
@@ -1122,6 +1123,9 @@ try{
   if(raw){ const p = JSON.parse(raw); S = Object.assign(defaultState(), p); S.settings = Object.assign(defaultState().settings, p.settings||{}); }
 }catch(e){ console.warn("状态读取失败", e); }
 S.settings.repo = Object.assign(defaultState().settings.repo, S.settings.repo||{});
+/* v1.6.1 一次性迁移：历史版本默认开启“练对自动移出错题本”，导致今日学习重推答对后错题转瞬即逝、
+   完成页显示有错题而错题本为空。此处翻转默认并留标记，用户手动再开则尊重其选择。 */
+if(S.settings.autoRemoveWrong===true && !S.settings._arwMigrated){ S.settings.autoRemoveWrong=false; S.settings._arwMigrated=true; save(); }
 function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){ toast("保存失败：浏览器存储不可用"); } }
 
 const allQuestions = () => {
@@ -1129,15 +1133,30 @@ const allQuestions = () => {
   return QUESTIONS.map(q=>over[q.id]||q).concat(S.custom.filter(q=>!QUESTIONS.some(b=>b.id===q.id)));
 };
 const byId = id => allQuestions().find(q=>q.id===id);
+/* 错题/收藏失效记录自愈：题库更新后遗留的“幽灵id”会让错题本列表显示为空、而首页统计仍计数（口径不一致）。
+   加载时与进入错题本/收藏页时统一清理，使两处始终同源。 */
+function sanitizeWrongFav(){
+  const valid = id => allQuestions().some(q=>q.id===id);
+  const bw = S.wrong.length, bf = S.fav.length;
+  S.wrong = S.wrong.filter(valid);
+  S.fav = S.fav.filter(valid);
+  const n = (bw - S.wrong.length) + (bf - S.fav.length);
+  if(n>0){
+    save();
+    setTimeout(()=>{ try{ toast("已自动清理 "+n+" 条失效的错题/收藏记录（题库更新遗留）"); }catch(e){} }, 800);
+  }
+  return n;
+}
+sanitizeWrongFav();
 const todayKey = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
 function markDaily(right){ const k=todayKey(); if(!S.daily[k]) S.daily[k]={n:0,r:0}; S.daily[k].n++; if(right) S.daily[k].r++; }
-function recordAnswer(q, right){
+function recordAnswer(q, right, keepWrong){
   const rec = S.records[q.id] || {r:0,w:0,last:'',ts:0};
   if(right) rec.r++; else rec.w++;
   rec.last = right?'r':'w'; rec.ts = Date.now();
   S.records[q.id]=rec;
   if(!right){ if(!S.wrong.includes(q.id)) S.wrong.push(q.id); }
-  else if(S.settings.autoRemoveWrong){ S.wrong = S.wrong.filter(x=>x!==q.id); }
+  else if(S.settings.autoRemoveWrong && !keepWrong){ S.wrong = S.wrong.filter(x=>x!==q.id); }
   markDaily(right); save();
 }
 function streak(){
@@ -1319,7 +1338,7 @@ function answerPractice(i){
   if(!q || ses.answers[key]!==undefined) return;
   ses.answers[key]=i;
   const right = i===q.a;
-  recordAnswer(q, right);
+  recordAnswer(q, right, ses.mode==="review"); // 今日学习重推是流程内自我纠正，答对不移出错题本
   gradeSRS(q.id, right);
   if(!right && ses.mode==="review"){
     ses.qids.push(q.id+"#r"+(++ses.requeue));
@@ -1413,9 +1432,9 @@ function renderReview(){
 }
 function renderPracticeDone(){
   const ses=S.session;
-  const qs=ses.qids.map(byId).filter(Boolean);
+  const qs=ses.qids.map(k=>byId(String(k).split("#")[0])).filter(Boolean);
   let right=0, wrong=0;
-  qs.forEach(q=>{ const a=ses.answers[q.id]; if(a!==undefined){ a===q.a?right++:wrong++; } });
+  ses.qids.forEach(k=>{ const q=byId(String(k).split("#")[0]); if(!q) return; const a=ses.answers[k]; if(a!==undefined){ a===q.a?right++:wrong++; } });
   const total=right+wrong, acc=total?Math.round(right/total*100):0;
   app.innerHTML=`
   <h2 class="vt">练习完成<small>${esc(ses.label)}</small></h2>
@@ -1429,7 +1448,11 @@ function renderPracticeDone(){
     </div>
   </div>`;
   $("#dHome").onclick=()=>{ S.session=null; save(); go("home"); };
-  const dw=$("#dWrong"); if(dw) dw.onclick=()=>{ go("wrong"); };
+  const dw=$("#dWrong"); if(dw) dw.onclick=()=>{
+    const wrongIds=[...new Set(ses.qids.filter(k=>{ const q=byId(String(k).split("#")[0]); return q && ses.answers[k]!==undefined && ses.answers[k]!==q.a; }).map(k=>String(k).split("#")[0]))];
+    S.session=null; save();
+    if(wrongIds.length) startPractice(wrongIds, "本轮错题回顾"); else go("wrong");
+  };
 }
 
 /* ================= 测验模式 ================= */
@@ -1612,11 +1635,12 @@ function listQ(ids, emptyText, extra){
   });
 }
 function renderWrong(){
+  sanitizeWrongFav();
   const qs=S.wrong.map(byId).filter(Boolean);
   const catIds=[...new Set(qs.map(q=>q.c))];
   listQ(S.wrong,"暂无错题。快去「练习」刷起来，做错的题会自动收进这里。", catIds.length>1?`<span class="muted">涉及模块：${catIds.map(catName).join("、")}</span>`:"");
 }
-function renderFav(){ listQ(S.fav,"暂无收藏。练习时点击右上角 ☆ 即可收藏好题。"); }
+function renderFav(){ sanitizeWrongFav(); listQ(S.fav,"暂无收藏。练习时点击右上角 ☆ 即可收藏好题。"); }
 
 /* ================= 统计 ================= */
 function renderStats(){
