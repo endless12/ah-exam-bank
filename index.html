@@ -98,6 +98,12 @@ h2.vt small{font-size:12px;color:var(--sub);font-weight:400;margin-left:8px;lett
 .oel{font-size:13px;line-height:1.6;color:var(--sub);margin-top:3px}
 .oel b{color:var(--ink);font-weight:600}
 .qfoot{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center}
+.ratebar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.rb{border:1.5px solid var(--line);background:var(--card);border-radius:10px;padding:7px 12px;font-size:13px;color:var(--sub);transition:.12s}
+.rb:hover{border-color:var(--brand2)}
+.rb.fuzzy:hover{border-color:var(--gold)}
+.rb.good{color:var(--brand);border-color:var(--brand)}
+.rb.easy{color:var(--ok);border-color:var(--ok)}
 .favbtn{margin-left:auto;border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 14px;font-size:14px;color:var(--sub)}
 .favbtn.on{color:var(--gold);border-color:var(--gold);background:rgba(176,141,87,.1)}
 .sheet{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
@@ -176,7 +182,7 @@ label.ck{display:flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
 <div id="toast"></div>
 <script>
 /* ================= 题库（内置，支持导入更新包） ================= */
-const BANK_VERSION = "v1.6.2（2026-11-06）";
+const BANK_VERSION = "v1.7.0（2026-11-06）";
 const QUESTIONS = [
 
 /* —— 省情（AH001-066 基础+精选；AH067-116 省情扩容 v1.5：2025数据/十四五收官/三条高铁/十五五/党代会） —— */
@@ -1110,6 +1116,7 @@ const defaultState = () => ({
   srs:{},            // qid -> {iv:间隔天数, ef:难度系数, n:连对次数, due:下次复习时间戳, last, ts}
   wrong:[],          // 错题 id 有序列表
   fav:[],            // 收藏 id
+  mastered:[],       // 已掌握（斩）id：不再进入复习与新学队列
   custom:[],         // 导入的题目（覆盖/新增）
   daily:{},          // 'YYYY-MM-DD' -> {n, r}
   exams:[],          // 测验历史
@@ -1137,10 +1144,11 @@ const byId = id => allQuestions().find(q=>q.id===id);
    加载时与进入错题本/收藏页时统一清理，使两处始终同源。 */
 function sanitizeWrongFav(){
   const valid = id => allQuestions().some(q=>q.id===id);
-  const bw = S.wrong.length, bf = S.fav.length;
+  const bw = S.wrong.length, bf = S.fav.length, bm = (S.mastered||[]).length;
   S.wrong = S.wrong.filter(valid);
   S.fav = S.fav.filter(valid);
-  const n = (bw - S.wrong.length) + (bf - S.fav.length);
+  S.mastered = (S.mastered||[]).filter(valid);
+  const n = (bw - S.wrong.length) + (bf - S.fav.length) + (bm - S.mastered.length);
   if(n>0){
     save();
     setTimeout(()=>{ try{ toast("已自动清理 "+n+" 条失效的错题/收藏记录（题库更新遗留）"); }catch(e){} }, 800);
@@ -1204,7 +1212,7 @@ function renderHome(){
   qs.forEach(q=>{ const rec=S.records[q.id]; if(rec){ doneN++; rN+=rec.r; wN+=rec.w; } });
   const acc = (rN+wN)? Math.round(rN/(rN+wN)*100) : 0;
   const dueN = dueList().length;
-  const masterN = Object.values(S.srs).filter(r=>r.iv>=30).length;
+  const masterN = srsCounts().mastered; // 含⚡标记掌握的题
   app.innerHTML = `
   <div class="hero">
     <h1>吾日三省 · 常识高频刷题</h1>
@@ -1290,7 +1298,8 @@ function renderPracticeSession(){
   const answered = chosen!==undefined;
   const right = answered && chosen===q.a;
   const favOn = S.fav.includes(q.id);
-  const srsRec = answered ? (S.srs[q.id]||null) : null;
+  const rated = (answered && right) ? ((ses.rated||{})[key]||null) : null;       // 本题记忆自评
+  const srsRec = (answered && (!right || rated)) ? (S.srs[q.id]||null) : null;   // 打分后才显示间隔
   const nextDue = srsRec ? fmtDue(srsRec.due) : null;
   app.innerHTML = `
   <div class="qhead">
@@ -1309,9 +1318,10 @@ function renderPracticeSession(){
         return `<button class="${cls}" data-i="${i}" ${answered?"disabled":""}><span class="k">${optLetter(i)}</span><span>${esc(t)}${answered&&q.oe&&q.oe[i]?`<span class="oe">${esc(q.oe[i])}</span>`:""}</span></button>`;
       }).join("")}
     </div>
-    ${answered?`<div class="expl"><b>${right?"✓ 回答正确":"✗ 回答错误，正确答案 "+optLetter(q.a)}</b><br>${esc(q.e||"（暂无解析）")}${ses.mode==="review"&&srsRec?`<br><span style="color:var(--brand2)">🧠 下次复习：${nextDue}（当前间隔 ${srsRec.iv>0?srsRec.iv+" 天":"0 天 · 立即到期"}）${!right?"· 本题稍后将在本轮重现":""}</span>`:""}</div>`:""}
+    ${answered?`<div class="expl"><b>${right?"✓ 回答正确":"✗ 回答错误，正确答案 "+optLetter(q.a)}</b><br>${esc(q.e||"（暂无解析）")}${srsRec?`<br><span style="color:var(--brand2)">🧠 下次复习：${nextDue}（间隔 ${srsRec.iv>0?srsRec.iv+" 天":"0 天 · 立即到期"}）${!right&&ses.mode==="review"?"· 本题稍后将在本轮重现":""}</span>`:""}${right&&!rated?`<div class="ratebar"><span class="muted" style="font-size:12.5px">🧠 记忆自评（决定下次复习间隔）：</span><button class="rb fuzzy" data-r="fuzzy">🙂 有点模糊</button><button class="rb good" data-r="good">😀 记得牢</button><button class="rb easy" data-r="easy">🚀 早已掌握</button></div>`:""}</div>`:""}
     <div class="qfoot">
       ${answered? `<button class="btn" id="pNext">下一题 →</button>` : `<span class="muted">点击选项作答（可按 1-4 / A-D 键）</span>`}
+      <button class="btn ghost" id="pMst" title="已掌握的题不再进入复习与新学队列">${S.mastered.includes(q.id)?"⚡ 已掌握（点击取消）":"⚡ 标记已掌握"}</button>
       <button class="btn ghost" id="pQuit">结束练习</button>
     </div>
   </div>
@@ -1327,10 +1337,12 @@ function renderPracticeSession(){
     }).join("")}</div>
   </div>`;
   app.querySelectorAll(".opt").forEach(b=>b.onclick=()=>answerPractice(+b.dataset.i));
-  const nb=$("#pNext"); if(nb) nb.onclick=()=>{ ses.idx++; save(); renderPracticeSession(); };
-  $("#pQuit").onclick=()=>confirmBox("结束本次练习？","已作答的统计与记忆进度将保留，未答题目不计错题。",()=>{ S.session=null; save(); go("home"); });
+  const nb=$("#pNext"); if(nb) nb.onclick=()=>{ ratePending(); ses.idx++; save(); renderPracticeSession(); };
+  app.querySelectorAll(".rb").forEach(b=>b.onclick=()=>applyRating(b.dataset.r));
+  const mb=$("#pMst"); if(mb) mb.onclick=()=>{ toggleMastered(q.id); renderPracticeSession(); };
+  $("#pQuit").onclick=()=>confirmBox("结束本次练习？","已作答的统计与记忆进度将保留，未答题目不计错题。",()=>{ ratePending(); S.session=null; save(); go("home"); });
   bindFavBtn(q.id);
-  app.querySelectorAll(".sheet button").forEach(b=>b.onclick=()=>{ ses.idx=+b.dataset.j; save(); renderPracticeSession(); });
+  app.querySelectorAll(".sheet button").forEach(b=>b.onclick=()=>{ ratePending(); ses.idx=+b.dataset.j; save(); renderPracticeSession(); });
 }
 function answerPractice(i){
   const ses=S.session; if(!ses) return;
@@ -1339,11 +1351,46 @@ function answerPractice(i){
   ses.answers[key]=i;
   const right = i===q.a;
   recordAnswer(q, right, ses.mode==="review"); // 今日学习重推是流程内自我纠正，答对不移出错题本
-  gradeSRS(q.id, right);
-  if(!right && ses.mode==="review"){
-    ses.qids.push(q.id+"#r"+(++ses.requeue));
+  if(!right){
+    gradeSRS(q.id, false); // 答错立即打分：立即到期 + 今日学习本轮稍后重现
+    if(ses.mode==="review") ses.qids.push(q.id+"#r"+(++ses.requeue));
   }
+  // 答对：暂缓打分，等待记忆自评（不评则按默认「记得牢」，见 ratePending）
   save(); renderPracticeSession();
+}
+function applyRating(rating){ // 墨墨式记忆自评：答对后选一档，决定下次复习间隔
+  const ses=S.session; if(!ses) return;
+  const key=String(ses.qids[ses.idx]); const q=byId(key.split("#")[0]);
+  if(!q) return;
+  const chosen=ses.answers[key];
+  if(chosen===undefined || chosen!==q.a) return; // 仅答对的题可自评
+  ses.rated = ses.rated || {};
+  if(ses.rated[key]) return;
+  ses.rated[key]=rating;
+  gradeSRS(q.id, true, rating);
+  save(); renderPracticeSession();
+}
+function ratePending(){ // 兜底：跳题/下一题/结束时，未自评的答对题按默认「记得牢」打分
+  const ses=S.session; if(!ses) return;
+  const key=String(ses.qids[ses.idx]); const q=byId(key.split("#")[0]);
+  if(!q) return;
+  const chosen=ses.answers[key];
+  if(chosen!==undefined && chosen===q.a){
+    ses.rated = ses.rated || {};
+    if(!ses.rated[key]){ ses.rated[key]="good"; gradeSRS(q.id, true, "good"); save(); }
+  }
+}
+function toggleMastered(qid){ // ⚡斩：标记已掌握的题不再进入复习与新学（只动列表，不改SRS记录——取消后按原间隔恢复复习）
+  const i=S.mastered.indexOf(qid);
+  if(i>=0){
+    S.mastered.splice(i,1);
+    toast("已取消掌握，题目按原记忆进度恢复复习");
+  } else {
+    S.mastered.push(qid);
+    const wi=S.wrong.indexOf(qid); if(wi>=0) S.wrong.splice(wi,1); // 掌握的错题不再是待攻克
+    toast("已标记掌握：不再进入复习与新学（可在题库浏览查看）");
+  }
+  save();
 }
 /* ================= 墨墨式记忆调度（间隔重复） ================= */
 const DAY = 86400000;
@@ -1355,45 +1402,53 @@ function fmtDue(ts){
   const dt = new Date(ts);
   return d<=1?"明天":d<7?(d+" 天后（"+(dt.getMonth()+1)+"/"+dt.getDate()+"）"):(dt.getFullYear()==new Date().getFullYear()?((dt.getMonth()+1)+"月"+dt.getDate()+"日"):(dt.getFullYear()+"/"+(dt.getMonth()+1)+"/"+dt.getDate()));
 }
-function gradeSRS(qid, right){
+function gradeSRS(qid, right, rating){
+  rating = rating || "good";
   const r = S.srs[qid] || {iv:0, ef:2.35, n:0, due:0, last:"", ts:0};
   if(right){
     r.n++;
-    if(r.n===1) r.iv=1;
-    else if(r.n===2) r.iv=3;
-    else if(r.n===3) r.iv=7;
-    else r.iv=Math.min(365, Math.round(r.iv*r.ef));
-    r.ef=Math.min(2.8, Math.max(1.7, r.ef+0.04));
+    let base; // 基准间隔：1天 → 3天 → 7天 → 按难度系数递增（约16、38…），直至掌握（≥30天）
+    if(r.n===1) base=1;
+    else if(r.n===2) base=3;
+    else if(r.n===3) base=7;
+    else base=Math.min(365, Math.round(r.iv*r.ef));
+    if(rating==="fuzzy") r.iv=Math.max(1, Math.ceil(base/2));   // 🙂 有点模糊：间隔减半
+    else if(rating==="easy") r.iv=Math.max(30, base*2);         // 🚀 早已掌握：直接进入30天+掌握区
+    else r.iv=base;                                             // 😀 记得牢（默认）
+    r.ef = rating==="easy" ? Math.min(2.8, r.ef+0.06)
+          : rating==="fuzzy" ? Math.max(1.7, r.ef-0.05)
+          : Math.min(2.8, Math.max(1.7, r.ef+0.04));
   } else {
     r.n=0; r.iv=0; r.ef=Math.max(1.7, r.ef-0.18);
   }
-  r.due = Date.now() + (r.iv>0 ? r.iv*DAY : 0); // v1.6.2: 答错立即到期，错题当场进入待复习/今日学习（原为+10分钟，练完查看时未到期）
+  r.due = Date.now() + (r.iv>0 ? r.iv*DAY : 0); // 答错立即到期，错题当场进入待复习/今日学习
   r.last = right?"r":"w"; r.ts=Date.now();
   S.srs[qid]=r;
   return r;
 }
 function dueList(){
   const now=Date.now();
-  return Object.keys(S.srs).filter(id=>S.srs[id].due<=now && byId(id)).sort((a,b)=>S.srs[a].due-S.srs[b].due);
+  return Object.keys(S.srs).filter(id=>S.srs[id].due<=now && byId(id) && !S.mastered.includes(id)).sort((a,b)=>S.srs[a].due-S.srs[b].due);
 }
 function srsCounts(){
-  const vals=Object.values(S.srs);
+  const mIds=new Set(S.mastered);
+  const entries=Object.entries(S.srs);
   return {
-    mastered: vals.filter(r=>r.iv>=30).length,
-    learning: vals.filter(r=>r.iv>0&&r.iv<30).length,
+    mastered: entries.filter(([id,r])=>r.iv>=30).length + S.mastered.filter(id=>!S.srs[id]||S.srs[id].iv<30).length,
+    learning: entries.filter(([id,r])=>r.iv>0&&r.iv<30&&!mIds.has(id)).length,
     due: dueList().length,
-    fresh: allQuestions().filter(q=>!S.srs[q.id]).length
+    fresh: allQuestions().filter(q=>!S.srs[q.id]&&!mIds.has(q.id)).length
   };
 }
 function reviewForecast(){
   const now=Date.now(); const b=[["今日",0],["明天",0],["3天内",0],["7天内",0],["15天内",0],["更远",0]];
-  Object.values(S.srs).forEach(r=>{ const d=(r.due-now)/DAY;
+  Object.entries(S.srs).forEach(([id,r])=>{ if(S.mastered.includes(id)) return; const d=(r.due-now)/DAY;
     if(d<=0) b[0][1]++; else if(d<=1) b[1][1]++; else if(d<=3) b[2][1]++; else if(d<=7) b[3][1]++; else if(d<=15) b[4][1]++; else b[5][1]++; });
   return b;
 }
 function startReview(newQuota){
   const due = dueList();
-  const fresh = shuffle(allQuestions().filter(q=>!S.srs[q.id])).slice(0,newQuota).map(q=>q.id);
+  const fresh = shuffle(allQuestions().filter(q=>!S.srs[q.id]&&!S.mastered.includes(q.id))).slice(0,newQuota).map(q=>q.id);
   // 交织排列：到期复习与新学交替，提升记忆效果
   const qids=[]; const a=due.slice(), b=fresh.slice();
   while(a.length||b.length){ if(a.length) qids.push(a.shift()); if(b.length) qids.push(b.shift()); }
@@ -1415,7 +1470,7 @@ function renderReview(){
   </div>
   <div class="card">
     <b>🧠 开始今日记忆任务</b>
-    <p class="muted" style="margin:8px 0 12px">将为你安排 <b style="color:var(--brand)">${c.due} 道到期复习</b>${c.due?"":""} + 新学额度内的题目（复习与新学交替出现）。答错的题会在本轮稍后重现，答对则自动延长下次复习间隔：1天 → 3天 → 7天 → 14天 → 1个月 → 更久，直至掌握。</p>
+    <p class="muted" style="margin:8px 0 12px">将为你安排 <b style="color:var(--brand)">${c.due} 道到期复习</b> + 新学额度内的题目（复习与新学交替出现）。答错的题会在本轮稍后重现；答对后可自评记忆难度：🙂 有点模糊（间隔减半）／😀 记得牢（默认 1天 → 3天 → 7天 → 更久）／🚀 早已掌握（直接30天+）。觉得太简单的题可点「⚡ 标记已掌握」，不再进入复习与新学。</p>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <span class="muted">新学额度</span>
       <select id="rvNew" style="width:auto"><option value="5">5 题</option><option value="10">10 题</option><option value="15" selected>15 题</option><option value="20">20 题</option><option value="30">30 题</option></select>
@@ -1564,7 +1619,7 @@ function submitExam(auto){
   let right=0;
   const detail=qs.map(q=>{ const a=ses.answers[q.id]; const ok=a===q.a; if(ok)right++;
     return {id:q.id, chosen:a, ok}; });
-  qs.forEach(q=>{ const a=ses.answers[q.id]; if(a!==undefined) recordAnswer(q, a===q.a); });
+  qs.forEach(q=>{ const a=ses.answers[q.id]; if(a!==undefined){ recordAnswer(q, a===q.a); gradeSRS(q.id, a===q.a, "good"); } }); // 测验无自评交互，按默认「记得牢」纳入记忆调度
   const total=qs.length, acc=total?Math.round(right/total*100):0;
   ses.result={right,total,acc,detail,auto}; ses.finishedAt=Date.now();
   S.exams.push({date:new Date().toLocaleString("zh-CN",{hour12:false}), label:ses.label, right, total, acc});
@@ -1622,7 +1677,7 @@ function listQ(ids, emptyText, extra){
   <div class="qlist">
     ${qs.map(q=>`<div class="qrow" data-id="${q.id}">
       <div class="qt"><span class="tag">${catName(q.c)}</span>${esc(q.q)}</div>
-      <div class="qm">答案 ${optLetter(q.a)} · 难度 ${diff(q.d)} ${S.records[q.id]?`· 已错 ${S.records[q.id].w} 次`:""}　<span class="muted">点击展开/收起</span></div>
+      <div class="qm">答案 ${optLetter(q.a)} · 难度 ${diff(q.d)} ${S.records[q.id]?`· 已错 ${S.records[q.id].w} 次`:""}${S.mastered.includes(q.id)?` · <span style="color:var(--gold)">⚡已掌握</span>`:""}　<span class="muted">点击展开/收起</span></div>
       <div class="qa"><b>答案：${optLetter(q.a)}. ${esc(q.o[q.a])}</b><br>${esc(q.e||"（暂无解析）")}${q.oe?`<div style="margin-top:8px">${q.o.map((x,k)=>`<div class="oel"><b>${optLetter(k)} ${esc(x)}</b>：${esc(q.oe[k]||"—")}</div>`).join("")}</div>`:""}</div>
     </div>`).join("")}
   </div>`;
@@ -1955,7 +2010,7 @@ document.addEventListener("keydown",e=>{
     if(!q) return;
     const map={"1":0,"2":1,"3":2,"4":3,"a":0,"b":1,"c":2,"d":3,"A":0,"B":1,"C":2,"D":3};
     if(e.key in map && ses.answers[key]===undefined){ answerPractice(map[e.key]); return; }
-    if((e.key==="Enter"||e.key==="ArrowRight")&&ses.answers[key]!==undefined){ ses.idx++; save(); renderPracticeSession(); }
+    if((e.key==="Enter"||e.key==="ArrowRight")&&ses.answers[key]!==undefined){ ratePending(); ses.idx++; save(); renderPracticeSession(); }
   }
 });
 const themeBtn=$("#themeBtn");
