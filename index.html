@@ -1122,18 +1122,101 @@ const defaultState = () => ({
   exams:[],          // 测验历史
   session:null,      // 进行中的练习/测验
   settings:{autoRemoveWrong:false, dark:false, dailyNew:15, repo:{user:"",repo:"ah-exam-bank",branch:"main",giteeUser:"",custom:"",auto:true}},
-  sync:null            // 云端同步信息 {version, at, source}
+  sync:null,           // 云端同步信息 {version, at, source}
+  updated:0,           // 本地最后修改时间戳（云端合并比较用）
+  cloud:{enabled:false,pat:"",gid:"",remoteAt:0,remoteMsg:""}  // 账号登录/学习进度云同步
 });
-let S = defaultState();
+let S = defaultState(); let hadLocal=false;
 try{
-  const raw = localStorage.getItem(LS_KEY);
+  const raw = localStorage.getItem(LS_KEY); hadLocal=!!raw;
   if(raw){ const p = JSON.parse(raw); S = Object.assign(defaultState(), p); S.settings = Object.assign(defaultState().settings, p.settings||{}); }
 }catch(e){ console.warn("状态读取失败", e); }
 S.settings.repo = Object.assign(defaultState().settings.repo, S.settings.repo||{});
+S.cloud = Object.assign({enabled:false,pat:"",gid:"",remoteAt:0,remoteMsg:""}, S.cloud||{});
 /* v1.6.1 一次性迁移：历史版本默认开启“练对自动移出错题本”，导致今日学习重推答对后错题转瞬即逝、
    完成页显示有错题而错题本为空。此处翻转默认并留标记，用户手动再开则尊重其选择。 */
 if(S.settings.autoRemoveWrong===true && !S.settings._arwMigrated){ S.settings.autoRemoveWrong=false; S.settings._arwMigrated=true; save(); }
-function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){ toast("保存失败：浏览器存储不可用"); } }
+function persistLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){ toast("保存失败：浏览器存储不可用"); } }
+function save(){ S.updated=Date.now(); persistLocal(); scheduleSync(); }
+
+/* ================= 账号登录 · 学习进度云同步（GitHub Gist 存档） ================= */
+const CLOUD_DESC = "吾日三省-学习进度云存档";
+let _syncing=false, _syncTimer=null;
+function cloudCfg(){ return S.cloud || (S.cloud={enabled:false,pat:"",gid:"",remoteAt:0,remoteMsg:""}); }
+function scheduleSync(){
+  const c=cloudCfg();
+  if(_syncing || !c.enabled || !c.pat) return;
+  clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(()=>cloudSync("auto"), 2500);
+}
+async function ghFetch(c,url,opts){
+  const headers=Object.assign({}, {"Authorization":"Bearer "+c.pat,"Accept":"application/vnd.github+json","Content-Type":"application/json"}, (opts&&opts.headers)||{});
+  return fetch(url, Object.assign({}, opts, {headers}));
+}
+async function findCloudGist(c){
+  const r=await ghFetch(c,"https://api.github.com/gists?per_page=100");
+  if(!r.ok) return null;
+  const list=await r.json();
+  return (Array.isArray(list)?list:[]).find(g=>g.description===CLOUD_DESC)||null;
+}
+function gistBody(){ return JSON.stringify({public:false, description:CLOUD_DESC, files:{"wtt-state.json":{content:JSON.stringify(S)}}}); }
+async function cloudPush(){
+  const c=cloudCfg();
+  try{
+    let res;
+    if(c.gid) res=await ghFetch(c,"https://api.github.com/gists/"+c.gid,{method:"PATCH",body:gistBody()});
+    else res=await ghFetch(c,"https://api.github.com/gists",{method:"POST",body:gistBody()});
+    const data=await res.json();
+    if(!res.ok) return {ok:false,msg:(data&&data.message)||("HTTP "+res.status)};
+    c.gid=data.id; c.remoteAt=Date.now(); c.remoteMsg="已同步于 "+new Date().toLocaleString("zh-CN",{hour12:false});
+    S.updated=Date.now(); persistLocal();
+    return {ok:true,msg:"学习进度已上传云端"};
+  }catch(e){ return {ok:false,msg:"同步异常："+(e.message||"")}; }
+}
+async function cloudPull(){
+  const c=cloudCfg();
+  try{
+    let gist=null;
+    if(c.gid){ const r=await ghFetch(c,"https://api.github.com/gists/"+c.gid); if(r.ok) gist=await r.json(); }
+    else gist=await findCloudGist(c);
+    if(!gist){ c.remoteAt=0; return {ok:false,empty:true,msg:"云端暂无存档"}; }
+    const f=gist.files&&gist.files["wtt-state.json"];
+    if(!f) return {ok:false,empty:true,msg:"云端存档为空"};
+    let content=f.content;
+    if((!content||f.truncated)&&f.raw_url){ const rr=await fetch(f.raw_url); content=await rr.text(); }
+    if(!content) return {ok:false,empty:true,msg:"云端存档为空"};
+    let remote; try{ remote=JSON.parse(content); }catch(e){ return {ok:false,msg:"云端存档解析失败"}; }
+    const pat=c.pat;
+    const merged=Object.assign(defaultState(), remote);
+    merged.cloud=Object.assign({enabled:false,pat:"",gid:"",remoteAt:0,remoteMsg:""}, remote.cloud||{});
+    merged.cloud.enabled=true; merged.cloud.pat=pat; merged.cloud.gid=gist.id; merged.cloud.remoteAt=Date.now(); merged.cloud.remoteMsg="已从云端恢复";
+    merged.settings=Object.assign(defaultState().settings, merged.settings||{});
+    merged.settings.repo=Object.assign(defaultState().settings.repo, merged.settings.repo||{});
+    S=merged; S.updated=Date.now(); persistLocal(); sanitizeWrongFav();
+    return {ok:true,msg:"已从云端恢复学习进度"};
+  }catch(e){ return {ok:false,msg:"恢复失败："+(e.message||"") }; }
+}
+async function cloudSync(mode){
+  const c=cloudCfg();
+  if(_syncing) return {ok:false,msg:"同步进行中，请稍候"};
+  if(!c.enabled||!c.pat) return {ok:false,msg:"未登录，无法同步"};
+  _syncing=true;
+  try{
+    if(mode==="pull") return await cloudPull();
+    let gist=null;
+    if(c.gid){ const r=await ghFetch(c,"https://api.github.com/gists/"+c.gid); if(r.ok) gist=await r.json(); }
+    else gist=await findCloudGist(c);
+    if(!gist) return await cloudPush();
+    c.gid=gist.id;
+    const remoteUpdated=Date.parse(gist.updated_at)||0;
+    const rf=gist.files&&gist.files["wtt-state.json"];
+    if(rf&&rf.content){
+      let remote; try{ remote=JSON.parse(rf.content); }catch(e){ remote=null; }
+      if(remote&&remoteUpdated>S.updated) return await cloudPull();
+    }
+    return await cloudPush();
+  } finally { _syncing=false; }
+}
 
 const allQuestions = () => {
   const over = {}; S.custom.forEach(q=>over[q.id]=q);
@@ -1932,7 +2015,22 @@ async function syncBank(manual){
 function renderCloud(){
   const r=S.settings.repo, sy=S.sync;
   app.innerHTML=`
-  <h2 class="vt">云端同步<small>题库放云端，手机打开即最新</small></h2>
+  <h2 class="vt">云端同步<small>账号登录保存进度 · 题库放云端</small></h2>
+  <div class="card">
+    <b>🔐 账号登录 · 学习进度云端保存</b>
+    <p class="muted" style="margin:8px 0 10px">用你的 GitHub 账号登录：学习进度（答题记录、错题本、收藏、记忆曲线、每日测验）会自动同步到你账号下<b>私有 Gist</b>。即使清理浏览器缓存、换电脑，也可一键恢复，进度不再丢失。</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <input type="password" id="ckPat" placeholder="GitHub 个人访问令牌（PAT，ghp_…）" style="flex:1;min-width:220px" value="${esc(S.cloud.pat||"")}">
+      <button class="btn" id="ckLogin">登录并同步</button>
+      <button class="btn ghost" id="ckPull">从云端恢复</button>
+      <button class="btn ghost" id="ckLogout">退出登录</button>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:8px">
+      <input type="text" id="ckGid" placeholder="可选：存档 Gist 地址或 ID（换设备自动查找失败时填写）" style="flex:1;min-width:220px" value="${esc(S.cloud.gid||"")}">
+    </div>
+    <p class="muted" style="margin-top:10px" id="ckStatus">${S.cloud.enabled?("已登录 · "+(S.cloud.remoteMsg||"上次同步 "+new Date(S.cloud.remoteAt||0).toLocaleString("zh-CN",{hour12:false}))):"未登录（进度目前仅保存在本机浏览器）"}</p>
+    <p class="muted" style="margin-top:6px;font-size:12px">如何获取 PAT：GitHub → Settings → Developer settings → Personal access tokens → <b>Tokens (classic)</b>（注意不是 Fine-grained tokens）→ Generate new token (classic) → Note 随便填、Expiration 可选 No expiration → 只勾选 <code>gist</code> → Generate → 复制 <code>ghp_…</code> 粘贴上方。令牌只保存在本地浏览器，不会上传到任何服务器。</p>
+  </div>
   <div class="card">
     <b>☁ 当前状态</b>
     <p class="muted" style="margin-top:6px">${sy?`云端版本 ${esc(sy.version)} · 来源 ${esc(sy.source)} · 同步于 ${new Date(sy.at).toLocaleString("zh-CN",{hour12:false})}`:`尚未同步，当前使用内置题库 ${BANK_VERSION}（离线可用）`}</p>
@@ -1972,6 +2070,17 @@ function renderCloud(){
     renderCloud(); };
   $("#syAuto").onchange=e=>{ r.auto=e.target.checked; save(); };
   $("#rSave").onclick=()=>{ r.user=$("#rUser").value.trim(); r.repo=$("#rRepo").value.trim()||"ah-exam-bank"; r.branch=$("#rBranch").value.trim()||"main"; r.giteeUser=$("#rGitee").value.trim(); r.custom=$("#rCustom").value.trim(); save(); toast("配置已保存"); };
+  $("#ckLogin").onclick=async()=>{ const c=cloudCfg(); c.pat=$("#ckPat").value.trim();
+    if(!c.pat) return toast("请输入 GitHub 个人访问令牌（PAT）");
+    const rawGid=($("#ckGid")&&$("#ckGid").value.trim())||"";
+    if(rawGid){ const m=rawGid.match(/([0-9a-f]{20,})/i); c.gid=m?m[1]:rawGid; }
+    c.enabled=true; save(); const b=$("#ckLogin"); b.textContent="登录中…";
+    let res=await cloudSync("pull");
+    if(res&&res.empty){ res=await cloudSync("push"); }
+    renderCloud();
+    toast(res&&res.ok?("✓ "+res.msg):("✗ "+((res&&res.msg)||"登录失败"))); };
+  $("#ckPull").onclick=async()=>{ const res=await cloudSync("pull"); renderCloud(); toast(res.ok?("✓ "+res.msg):(res.empty?"云端暂无存档":("✗ "+res.msg))); };
+  $("#ckLogout").onclick=()=>{ S.cloud.enabled=false; S.cloud.pat=""; persistLocal(); renderCloud(); toast("已退出登录（本地进度仍保留）"); };
 }
 function normQ(raw){
   if(!raw||typeof raw.q!=="string") return null;
@@ -2026,6 +2135,11 @@ applyTheme();
     go(S.session.kind==="exam"?"examining":"practicing");
   } else go("home");
   (async()=>{
+    const cloud=S.cloud;
+    if(cloud&&cloud.enabled&&cloud.pat){
+      const cr= hadLocal ? await cloudSync("auto") : await cloudSync("pull");
+      if(cr&&cr.ok) toast("☁ "+cr.msg);
+    }
     const r=S.settings.repo||{};
     if(r.auto===false) return;
     if(r.user||r.giteeUser||r.custom||location.protocol.indexOf("http")===0){
